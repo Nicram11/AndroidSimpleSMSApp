@@ -1,41 +1,32 @@
 package com.example.smsapp;
 
+import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.Manifest;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.content.IntentFilter;
-import android.content.BroadcastReceiver;
 
-import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.google.android.material.navigation.NavigationView;
+import com.example.smsapp.permission.PermissionHandler;
+import com.example.smsapp.smsHandling.SmsReader;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends BaseDrawerActivity  {
     private List<SmsMessage> smsList = new ArrayList<>();
     private ListView listView;
     private SmsAdapter adapter;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
-
+    private static final int PERMISSIONS_REQUEST_CODE = 123;
+    private static final String SMS_RECEIVED_ACTION = "SMS_RECEIVED_ACTION";
+    private PermissionHandler permissionHandler = new PermissionHandler(this, PERMISSIONS_REQUEST_CODE);
     @Override
     protected int getLayoutResId() {
         return R.layout.activity_main;
@@ -45,7 +36,7 @@ public class MainActivity extends BaseDrawerActivity  {
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter("SMS_RECEIVED_ACTION");
-        registerReceiver(smsReceiver, filter);
+        registerReceiver(smsReceiver, filter,  Context.RECEIVER_NOT_EXPORTED);
         readSms();
     }
 
@@ -70,10 +61,10 @@ public class MainActivity extends BaseDrawerActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         listView = (ListView) findViewById(R.id.listView);
         adapter = new SmsAdapter(this, smsList);
         listView.setAdapter(adapter);
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -132,29 +123,9 @@ public class MainActivity extends BaseDrawerActivity  {
     }
 
     private void readSms() {
-        Uri uriSms = Uri.parse("content://sms/");
-        Cursor cursor = getContentResolver().query(uriSms, new String[]{"_id", "address", "date", "body", "type"},
-                "address IS NOT NULL", null, "date DESC");
 
         smsList.clear();
-        HashMap<String, SmsMessage> lastMessages = new HashMap<>();
-
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                String address = cursor.getString(1);
-
-                if (!lastMessages.containsKey(address)) {
-                    String date = cursor.getString(2);
-                    String body = cursor.getString(3);
-                    int type = cursor.getInt(4);
-                    SmsMessage sms = new SmsMessage(address, date, body, type);
-                    lastMessages.put(address, sms);
-                }
-            }
-            cursor.close();
-        }
-
-        smsList.addAll(lastMessages.values());
+        smsList.addAll( SmsReader.readSmsMessages(this));
         adapter.notifyDataSetChanged();
     }
     private void openConversation(SmsMessage message) {

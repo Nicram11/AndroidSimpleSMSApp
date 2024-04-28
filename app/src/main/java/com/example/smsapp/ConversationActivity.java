@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,7 +40,7 @@ public class ConversationActivity extends BaseDrawerActivity {
     protected void onResume() {
         super.onResume();
         IntentFilter filter = new IntentFilter("SMS_RECEIVED_ACTION");
-        registerReceiver(messageReceiver, filter);
+        registerReceiver(messageReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
     }
 
     @Override
@@ -69,7 +70,7 @@ public class ConversationActivity extends BaseDrawerActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
- currentPhoneNumber = getIntent().getStringExtra("PHONE_NUMBER");
+         currentPhoneNumber = getIntent().getStringExtra("PHONE_NUMBER");
         if(currentPhoneNumber != null) {
             loadConversation(currentPhoneNumber);
             TextView contactInfoView = findViewById(R.id.text_contact_info);
@@ -79,7 +80,7 @@ public class ConversationActivity extends BaseDrawerActivity {
         }
 
         IntentFilter filter = new IntentFilter("SMS_RECEIVED_ACTION");
-        registerReceiver(messageReceiver, filter);
+        registerReceiver(messageReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
 
 
         buttonSend.setOnClickListener(new View.OnClickListener() {

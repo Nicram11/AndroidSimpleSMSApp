@@ -8,8 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
- >
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -17,26 +16,49 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:elevation="4dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        >
 
-        <EditText
+    <EditText
             android:id="@+id/editTextPhoneNumber"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Wpisz numer telefonu"
-            android:inputType="phone" />
+            android:inputType="phone"
+            android:layout_marginTop="8dp"
+            android:padding="16dp"/>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewContacts"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"/>
+
+
 
         <EditText
             android:id="@+id/editTextMessageText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Wpisz wiadomość"
-            android:inputType="textMultiLine" />
+            android:inputType="textMultiLine"
+            android:layout_marginTop="8dp"
+            android:padding="16dp"/>
 
         <Button
             android:id="@+id/buttonSendMessage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Wyślij wiadomość" />
+            android:padding="16dp"
+            android:text="Wyślij wiadomość"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"/>
+    </LinearLayout>
     </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -46,4 +68,5 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/drawer_menu" />
+
 </androidx.drawerlayout.widget.DrawerLayout>
